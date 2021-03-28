@@ -5,7 +5,8 @@ import generateClues from "../utils/generateClues";
 
 const ColumnHeader = ({ className, width, selectedCells }) => (
   <div className={className}>
-    {times(width, i => (
+    <Spacer />
+    {times(width, (i) => (
       <CellGroupValues key={i}>
         {selectedCells[i] &&
           generateClues(selectedCells[i]).map((cell, index) => (
@@ -26,16 +27,21 @@ const CellGroupValues = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  width: 50px;
-  height: 100%;
   border: 1px solid white;
+  flex: 1;
+`;
+
+const Spacer = styled.div`
+  flex: 1;
 `;
 
 const StyledColumnHeader = styled(ColumnHeader)`
-  height: 200px;
+opacity: 0.5;
+background-color: blue;
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  height: 30vh;
 `;
 
 export default StyledColumnHeader;

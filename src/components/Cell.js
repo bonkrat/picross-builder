@@ -6,12 +6,13 @@ const Cell = ({ className, onClick }) => (
 );
 
 const StyledCell = styled(Cell)`
-  width: 50px;
-  height: 50px;
+  width: 100%;
+  height: 100%;
   border: 1px solid black;
   cursor: pointer;
-  background: ${props => (props.color ? props.color : "white")}
-    ${props =>
+  box-sizing: border-box;
+  background: ${(props) => (props.color ? props.color : "white")}
+    ${(props) =>
       props.isSelected
         ? css`
             box-shadow: inset 1px 1px 0px 1px white;

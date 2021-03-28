@@ -5,11 +5,13 @@ import Grid from "./components/Grid";
 import { StateProvider } from "./store.js";
 
 function App() {
+  console.log("asdfadsf");
+
   return (
     <StateProvider>
       <div className="App">
         <Grid />
-        <Controls />
+        {/* <Controls /> */}
       </div>
     </StateProvider>
   );

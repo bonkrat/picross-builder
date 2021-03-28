@@ -14,30 +14,37 @@ export const Row = ({ className, width, selectedCells, children }) => (
 );
 
 const CellGroupValue = styled.div`
-  padding: 0 10px;
+  padding: 0 5px;
   font-weight: bold;
 `;
 
 const CellGroupValues = styled.div`
-  width: 200px;
   display: flex;
+  flex: 1;
   justify-content: flex-end;
   align-items: center;
-  padding: 0 20px;
+  box-sizing: border-box;
+  font-size: 12px;
 `;
 
 const Cells = styled.div`
+  height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  flex: 4;
+  flex-shrink: 0;
+  margin-left: 20px;
 `;
 
 const StyledRow = styled(Row)`
+  width: 100%;
+  height: ${(props) => 100 / props.height}%;
   display: flex;
   justify-content: flex-end;
 `;
 
 StyledRow.defaultProps = {
-  selectedCells: []
+  selectedCells: [],
 };
 
 export default StyledRow;

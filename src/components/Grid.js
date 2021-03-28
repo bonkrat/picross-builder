@@ -6,7 +6,7 @@ import styled from "styled-components";
 import ColumnHeader from "./ColumnHeader";
 import { store } from "../store";
 
-export const getRowData = cells =>
+export const getRowData = (cells) =>
   cells.reduce((acc, curr) => {
     if (curr.selected) {
       acc[curr.x] = acc[curr.x] ? [...acc[curr.x], curr.y] : [curr.y];
@@ -14,7 +14,7 @@ export const getRowData = cells =>
     return acc;
   }, {});
 
-export const getColumnData = cells =>
+export const getColumnData = (cells) =>
   cells.reduce((acc, curr) => {
     if (curr.selected) {
       acc[curr.y] = acc[curr.y] ? [...acc[curr.y], curr.x] : [curr.x];
@@ -23,12 +23,10 @@ export const getColumnData = cells =>
   }, {});
 
 const findCell = (cells, cell) =>
-  cells.find(coords => coords.x === cell.x && coords.y === cell.y);
+  cells.find((coords) => coords.x === cell.x && coords.y === cell.y);
 
 /**
  * A nonogram grid.
- *
- * @param {*} param0
  */
 const Grid = ({ className, width, height }) => {
   const { state, dispatch } = useContext(store);
@@ -39,8 +37,8 @@ const Grid = ({ className, width, height }) => {
       type: "PAINT_CELL",
       payload: {
         x,
-        y
-      }
+        y,
+      },
     });
   };
 
@@ -49,8 +47,8 @@ const Grid = ({ className, width, height }) => {
       type: "TOGGLE_CELL",
       payload: {
         x,
-        y
-      }
+        y,
+      },
     });
 
   const clearCell = ({ x, y }) =>
@@ -58,8 +56,8 @@ const Grid = ({ className, width, height }) => {
       type: "CLEAR_CELL",
       payload: {
         x,
-        y
-      }
+        y,
+      },
     });
 
   const handleCellClick = ({ x, y }) => {
@@ -81,9 +79,9 @@ const Grid = ({ className, width, height }) => {
   return (
     <div className={className}>
       <ColumnHeader width={width} selectedCells={columnGroups} />
-      {times(height, i => (
-        <Row key={i} width={width} selectedCells={rowGroups[i]}>
-          {times(width, j => {
+      {times(height, (i) => (
+        <Row key={i} width={width} height={height} selectedCells={rowGroups[i]}>
+          {times(width, (j) => {
             const cell = getCell({ x: i, y: j });
             return (
               <Cell
@@ -100,13 +98,21 @@ const Grid = ({ className, width, height }) => {
   );
 };
 
+const size = 100;
+
 const StyledGrid = styled(Grid)`
-  margin-right: 200px;
+  max-height: ${size}vw;
+  height: 100%;
+  width: 100%;
+  max-width: 1096px;
+  display: flex;
+  flex-direction: column;
+  background-color: green;
 `;
 
 StyledGrid.defaultProps = {
-  width: 10,
-  height: 10
+  width: 5,
+  height: 5,
 };
 
 export default StyledGrid;
