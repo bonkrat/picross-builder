@@ -1,10 +1,15 @@
 .App {
   width: 100vw;
-  height: 100vh;
-  display: flex;
+  height: 100%;
+  min-height: 100%;
+
+  overflow-x: hidden;
+  overflow-y: hidden;
   box-sizing: border-box;
+  padding: 10px;
+
+  display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 20px 10px;
 }
 

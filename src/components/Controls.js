@@ -9,7 +9,7 @@ const Controls = () => {
   const { dispatch } = useContext(store);
   const resetCells = () =>
     dispatch({
-      type: "RESET_CELLS"
+      type: "RESET_CELLS",
     });
   return (
     <ButtonGroup>

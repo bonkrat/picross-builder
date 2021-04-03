@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import Cell from "./Cell";
 import Row from "./Row";
 import { times } from "lodash";
 import styled from "styled-components";
 import ColumnHeader from "./ColumnHeader";
 import { store } from "../store";
+import TOOLS from "../constants/tools";
+import useMouseDown from "../hooks/useMouseButton";
+import { CELL_ACTIONS } from "../store";
 
 export const getRowData = (cells) =>
   cells.reduce((acc, curr) => {
@@ -31,42 +34,64 @@ const findCell = (cells, cell) =>
 const Grid = ({ className, width, height }) => {
   const { state, dispatch } = useContext(store);
   const { selectedCells, tool } = state;
+  const [isSelecting, setIsSelecting] = useState(null);
 
-  const paintCell = ({ x, y }) => {
+  const { isMouseDown } = useMouseDown(
+    // onMouseUp
+    () => {},
+    // onMouseDown
+    () => {
+      setIsSelecting(null);
+    }
+  );
+
+  const selectCell = (cell) =>
     dispatch({
-      type: "PAINT_CELL",
-      payload: {
-        x,
-        y,
-      },
+      type: CELL_ACTIONS.SELECT,
+      payload: cell,
+    });
+
+  const toggleCell = (cell) =>
+    dispatch({
+      type: CELL_ACTIONS.TOGGLE,
+      payload: cell,
+    });
+
+  const paintCell = (cell) => {
+    dispatch({
+      type: CELL_ACTIONS.PAINT,
+      payload: cell,
     });
   };
 
-  const toggleCell = ({ x, y }) =>
+  const clearCell = (cell) =>
     dispatch({
-      type: "TOGGLE_CELL",
-      payload: {
-        x,
-        y,
-      },
+      type: CELL_ACTIONS.CLEAR,
+      payload: cell,
     });
 
-  const clearCell = ({ x, y }) =>
-    dispatch({
-      type: "CLEAR_CELL",
-      payload: {
-        x,
-        y,
-      },
-    });
+  const handleCellClick = (cell) => {
+    if (tool === TOOLS.PENCIL) {
+      toggleCell(cell);
+    } else if (tool === TOOLS.BRUSH) {
+      paintCell(cell);
+    } else if (tool === TOOLS.ERASER) {
+      clearCell(cell);
+    }
+  };
 
-  const handleCellClick = ({ x, y }) => {
-    if (tool === "pencil") {
-      toggleCell({ x, y });
-    } else if (tool === "brush") {
-      paintCell({ x, y });
-    } else if (tool === "eraser") {
-      clearCell({ x, y });
+  const handleMouseEnter = (cell) => {
+    if (isMouseDown && isSelecting) {
+      selectCell(cell);
+    } else if (isMouseDown && !isSelecting) {
+      clearCell(cell);
+    } else {
+      const cellData = getCell(cell);
+      if (cellData?.selected) {
+        setIsSelecting(false);
+      } else {
+        setIsSelecting(true);
+      }
     }
   };
 
@@ -78,41 +103,42 @@ const Grid = ({ className, width, height }) => {
 
   return (
     <div className={className}>
-      <ColumnHeader width={width} selectedCells={columnGroups} />
-      {times(height, (i) => (
-        <Row key={i} width={width} height={height} selectedCells={rowGroups[i]}>
-          {times(width, (j) => {
-            const cell = getCell({ x: i, y: j });
-            return (
-              <Cell
-                key={j}
-                color={cell && cell.color}
-                isSelected={cell && cell.selected}
-                onClick={() => handleCellClick({ x: i, y: j })}
-              />
-            );
-          })}
-        </Row>
-      ))}
+      {times(height, (i) =>
+        times(width, (j) => {
+          const cell = { x: i, y: j },
+            cellData = getCell(cell);
+          return (
+            <Cell
+              key={`${i}${j}`}
+              color={cellData && cellData.color}
+              isSelected={cellData && cellData.selected}
+              onMouseDown={() => handleCellClick(cell)}
+              onMouseEnter={() => handleMouseEnter(cell)}
+            />
+          );
+        })
+      )}
     </div>
   );
 };
 
-const size = 100;
+const buildColumnAutos = (num) => {
+  return times(num, () => "auto").join(" ");
+};
 
 const StyledGrid = styled(Grid)`
-  max-height: ${size}vw;
-  height: 100%;
-  width: 100%;
-  max-width: 1096px;
-  display: flex;
-  flex-direction: column;
-  background-color: green;
+  height: ${() => {
+    return window.innerWidth > window.innerHeight ? `75vh` : `75vw`;
+  }};
+  width: ${() => (window.innerWidth > window.innerHeight ? `75vh` : `75vw`)};
+  display: grid;
+  grid-template-columns: ${(props) => buildColumnAutos(props.width)} 
+  grid-template-rows:  ${(props) => buildColumnAutos(props.height)}
 `;
 
 StyledGrid.defaultProps = {
-  width: 5,
-  height: 5,
+  width: 15,
+  height: 15,
 };
 
 export default StyledGrid;

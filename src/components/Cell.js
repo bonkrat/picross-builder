@@ -1,25 +1,38 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-const Cell = ({ className, onClick }) => (
-  <div className={className} onClick={onClick}></div>
+const Cell = ({ className, onMouseDown, onMouseEnter }) => (
+  <div
+    className={className}
+    onMouseDown={onMouseDown}
+    onMouseEnter={onMouseEnter}
+  ></div>
 );
 
 const StyledCell = styled(Cell)`
-  width: 100%;
-  height: 100%;
   border: 1px solid black;
   cursor: pointer;
   box-sizing: border-box;
-  background: ${(props) => (props.color ? props.color : "white")}
-    ${(props) =>
-      props.isSelected
-        ? css`
-            box-shadow: inset 1px 1px 0px 1px white;
-          `
-        : css`
-            opacity: 0.5;
-          `};
+
+  // Coloring cells is disabled for now.
+  // background: ${(props) => (props.color ? props.color : "white")}
+
+  ${(props) =>
+    props.isSelected
+      ? css`
+          background: black;
+          box-shadow: inset 2px 2px 0px 2px white;
+        `
+      : css`
+          background: white;
+        `};
+
+  &:hover {
+    border: 1px solid blue;
+    box-shadow: inset 1px 1px 0px 1px white;
+    background: gray;
+    opacity: 0.7;
+  }
 `;
 
 export default StyledCell;
