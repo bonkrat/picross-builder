@@ -31,7 +31,6 @@ const StyledCell = styled(Cell)`
     border: 1px solid blue;
     box-shadow: inset 1px 1px 0px 1px white;
     background: gray;
-    opacity: 0.7;
   }
 `;
 

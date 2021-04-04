@@ -1,13 +1,10 @@
-import React, { useState, useContext } from "react";
-import Cell from "./Cell";
-import Row from "./Row";
 import { times } from "lodash";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import ColumnHeader from "./ColumnHeader";
-import { store } from "../store";
 import TOOLS from "../constants/tools";
 import useMouseDown from "../hooks/useMouseButton";
-import { CELL_ACTIONS } from "../store";
+import { CELL_ACTIONS, store } from "../store";
+import Cell from "./Cell";
 
 export const getRowData = (cells) =>
   cells.reduce((acc, curr) => {
@@ -25,15 +22,12 @@ export const getColumnData = (cells) =>
     return acc;
   }, {});
 
-const findCell = (cells, cell) =>
-  cells.find((coords) => coords.x === cell.x && coords.y === cell.y);
-
 /**
  * A nonogram grid.
  */
 const Grid = ({ className, width, height }) => {
   const { state, dispatch } = useContext(store);
-  const { selectedCells, tool } = state;
+  const { cells, tool } = state;
   const [isSelecting, setIsSelecting] = useState(null);
 
   const { isMouseDown } = useMouseDown(
@@ -70,7 +64,7 @@ const Grid = ({ className, width, height }) => {
       payload: cell,
     });
 
-  const handleCellClick = (cell) => {
+  const handleCellClick = (cell) => () => {
     if (tool === TOOLS.PENCIL) {
       toggleCell(cell);
     } else if (tool === TOOLS.BRUSH) {
@@ -80,7 +74,7 @@ const Grid = ({ className, width, height }) => {
     }
   };
 
-  const handleMouseEnter = (cell) => {
+  const handleMouseEnter = (cell) => () => {
     if (isMouseDown && isSelecting) {
       selectCell(cell);
     } else if (isMouseDown && !isSelecting) {
@@ -96,10 +90,10 @@ const Grid = ({ className, width, height }) => {
   };
 
   const getCell = ({ x, y }) => {
-    return findCell(selectedCells, { x, y });
+    return cells.length ? cells[x][y] : {};
   };
-  const rowGroups = getRowData(selectedCells);
-  const columnGroups = getColumnData(selectedCells);
+  // const rowGroups = getRowData(selectedCells);
+  // const columnGroups = getColumnData(selectedCells);
 
   return (
     <div className={className}>
@@ -107,13 +101,14 @@ const Grid = ({ className, width, height }) => {
         times(width, (j) => {
           const cell = { x: i, y: j },
             cellData = getCell(cell);
+
           return (
             <Cell
               key={`${i}${j}`}
-              color={cellData && cellData.color}
-              isSelected={cellData && cellData.selected}
-              onMouseDown={() => handleCellClick(cell)}
-              onMouseEnter={() => handleMouseEnter(cell)}
+              color={cellData.color}
+              isSelected={cellData.selected}
+              onMouseDown={handleCellClick(cell)}
+              onMouseEnter={handleMouseEnter(cell)}
             />
           );
         })
@@ -122,18 +117,15 @@ const Grid = ({ className, width, height }) => {
   );
 };
 
-const buildColumnAutos = (num) => {
-  return times(num, () => "auto").join(" ");
-};
-
-const StyledGrid = styled(Grid)`
-  height: ${() => {
-    return window.innerWidth > window.innerHeight ? `75vh` : `75vw`;
-  }};
-  width: ${() => (window.innerWidth > window.innerHeight ? `75vh` : `75vw`)};
-  display: grid;
-  grid-template-columns: ${(props) => buildColumnAutos(props.width)} 
-  grid-template-rows:  ${(props) => buildColumnAutos(props.height)}
+const buildColumnAutos = (num) => times(num, () => "auto").join(" "),
+  StyledGrid = styled(Grid)`
+    height: ${() => {
+      return window.innerWidth > window.innerHeight ? `75vh` : `75vw`;
+    }};
+    width: ${() => (window.innerWidth > window.innerHeight ? `75vh` : `75vw`)};
+    display: grid;
+    grid-template-columns: ${(props) => buildColumnAutos(props.width)} 
+    grid-template-rows:  ${(props) => buildColumnAutos(props.height)}
 `;
 
 StyledGrid.defaultProps = {

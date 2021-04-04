@@ -8,7 +8,6 @@ export default function useMouseDown(
 
   useEffect(() => {
     document.body.onmousedown = function (e) {
-      console.log(e.target);
       setIsMouseDown(true);
       onMouseDown();
     };
