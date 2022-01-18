@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
 import { store } from "../store";
 import styled, { css } from "styled-components";
+import TOOL_TYPES from "../constants/tools";
 
 const Tool = styled.div`
   margin: 10px;
   cursor: pointer;
   border-radius: 10px;
   padding: 10px;
-  ${props =>
+  ${(props) =>
     props.selected &&
     css`
       background-color: black;
@@ -18,10 +19,10 @@ const Tools = ({ className }) => {
   const { state, dispatch } = useContext(store);
   const { tool } = state;
 
-  const setTool = tool => () =>
+  const setTool = (tool) => () =>
     dispatch({
       type: "SET_TOOL",
-      payload: tool
+      payload: tool,
     });
 
   return (
@@ -29,11 +30,17 @@ const Tools = ({ className }) => {
       <Tool selected={tool === "pencil"} onClick={setTool("pencil")}>
         ✏️
       </Tool>
-      <Tool selected={tool === "brush"} onClick={setTool("brush")}>
+      {/* <Tool selected={tool === "brush"} onClick={setTool("brush")}>
         🖌
-      </Tool>
+      </Tool> */}
       <Tool selected={tool === "eraser"} onClick={setTool("eraser")}>
         🥊
+      </Tool>
+      <Tool
+        selected={tool === TOOL_TYPES.SPLIT}
+        onClick={setTool(TOOL_TYPES.SPLIT)}
+      >
+        <span>🖖</span>
       </Tool>
     </div>
   );

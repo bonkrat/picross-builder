@@ -1,5 +1,6 @@
 import { times } from "lodash";
 import React, { createContext, useCallback, useMemo, useReducer } from "react";
+import generateClues from "./utils/generateClues";
 
 const initialState = {
   cells: [],
@@ -15,6 +16,7 @@ export const CELL_ACTIONS = {
   TOGGLE: "toggle",
   PAINT: "paint",
   CLEAR: "clear",
+  SPLIT: "split",
 };
 
 const StateProvider = ({ children, width, height }) => {
@@ -32,6 +34,7 @@ const StateProvider = ({ children, width, height }) => {
   const initialState = useMemo(
     () => ({
       cells: buildCells(),
+      split: {},
       tool: "pencil",
       color: "black",
     }),
@@ -101,6 +104,11 @@ const StateProvider = ({ children, width, height }) => {
             ...state,
             cells: newCells,
           };
+        case CELL_ACTIONS.SPLIT:
+          return {
+            ...state,
+            split: { x, y },
+          };
         case "RESET_CELLS":
           newCells = buildCells();
           return {
@@ -116,6 +124,41 @@ const StateProvider = ({ children, width, height }) => {
           return {
             ...state,
             color: action.payload,
+          };
+        case "SAVE_PUZZLE":
+          let rowClues = [];
+          let rowLength = 0;
+          let colClues = [];
+
+          console.log(
+            cells.map((row) => {
+              rowLength = row.length;
+              const selected = row.reduce((acc, curr, index) => {
+                if (curr.selected) {
+                  acc.push(index);
+                }
+                return acc;
+              }, []);
+
+              rowClues.push(generateClues(selected));
+            })
+          );
+          console.log(rowClues);
+
+          for (var i = 0; i < rowLength; i++) {
+            const colData = cells.map((row) => row[i]);
+            const selectedColCell = colData.reduce((acc, curr, index) => {
+              if (curr.selected) {
+                acc.push(index);
+              }
+              return acc;
+            }, []);
+            colClues.push(generateClues(selectedColCell));
+          }
+          console.log(colClues);
+
+          return {
+            ...state,
           };
         default:
           throw new Error();

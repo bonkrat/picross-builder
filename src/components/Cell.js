@@ -10,12 +10,22 @@ const Cell = ({ className, onMouseDown, onMouseEnter }) => (
 );
 
 const StyledCell = styled(Cell)`
-  border: 1px solid black;
   cursor: pointer;
   box-sizing: border-box;
 
   // Coloring cells is disabled for now.
-  // background: ${(props) => (props.color ? props.color : "white")}
+
+  ${(props) =>
+    props.splitBorder
+      ? css`
+          border: 1px solid black;
+          ${props.splitBorder.map(
+            (border) => `border-${border}: 5px solid green;`
+          )}
+        `
+      : css`
+          border: 1px solid black;
+        `}
 
   ${(props) =>
     props.isSelected

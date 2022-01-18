@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
-import Button from "./Button";
-import ColorPicker from "./ColorPicker";
-import Tools from "./Tools";
 import styled from "styled-components";
 import { store } from "../store";
+import Button from "./Button";
+import Tools from "./Tools";
 
 const Controls = () => {
   const { dispatch } = useContext(store);
@@ -11,20 +10,25 @@ const Controls = () => {
     dispatch({
       type: "RESET_CELLS",
     });
+
+  const savePuzzle = () => dispatch({ type: "SAVE_PUZZLE" });
+
   return (
     <ButtonGroup>
       <Tools />
-      <ColorPicker />
+      {/* <ColorPicker /> */}
       <Button onClick={resetCells}>Reset</Button>
-      <Button primary>Save</Button>
+      <Button onClick={savePuzzle} primary>
+        Save
+      </Button>
     </ButtonGroup>
   );
 };
 
 const ButtonGroup = styled.div`
   position: fixed;
-  bottom: 0;
-  width: 100%;
+  top: 10vh;
+  width: 75vw;
   display: flex;
   justify-content: space-between;
 `;

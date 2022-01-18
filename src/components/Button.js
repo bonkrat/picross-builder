@@ -2,9 +2,9 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 const Button = ({ className, onClick, children }) => (
-  <a className={className} onClick={onClick}>
+  <button className={className} onClick={onClick}>
     {children}
-  </a>
+  </button>
 );
 
 const StyledButton = styled(Button)`
@@ -22,7 +22,7 @@ const StyledButton = styled(Button)`
   cursor: pointer;
   box-shadow: inset -2px -2px 0px 1px black;
 
-  ${props =>
+  ${(props) =>
     props.primary &&
     css`
       border: 2px solid black;

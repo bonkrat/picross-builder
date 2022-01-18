@@ -1,10 +1,12 @@
 import { times } from "lodash";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, memo } from "react";
 import styled from "styled-components";
 import TOOLS from "../constants/tools";
 import useMouseDown from "../hooks/useMouseButton";
 import { CELL_ACTIONS, store } from "../store";
 import Cell from "./Cell";
+
+const MemoizedCell = memo(Cell);
 
 export const getRowData = (cells) =>
   cells.reduce((acc, curr) => {
@@ -27,7 +29,7 @@ export const getColumnData = (cells) =>
  */
 const Grid = ({ className, width, height }) => {
   const { state, dispatch } = useContext(store);
-  const { cells, tool } = state;
+  const { cells, tool, split } = state;
   const [isSelecting, setIsSelecting] = useState(null);
 
   const { isMouseDown } = useMouseDown(
@@ -64,6 +66,9 @@ const Grid = ({ className, width, height }) => {
       payload: cell,
     });
 
+  const setSplit = (cell) =>
+    dispatch({ type: CELL_ACTIONS.SPLIT, payload: cell });
+
   const handleCellClick = (cell) => () => {
     if (tool === TOOLS.PENCIL) {
       toggleCell(cell);
@@ -71,6 +76,8 @@ const Grid = ({ className, width, height }) => {
       paintCell(cell);
     } else if (tool === TOOLS.ERASER) {
       clearCell(cell);
+    } else if (tool === TOOLS.SPLIT) {
+      setSplit(cell);
     }
   };
 
@@ -101,11 +108,20 @@ const Grid = ({ className, width, height }) => {
         times(width, (j) => {
           const cell = { x: i, y: j },
             cellData = getCell(cell);
+          let splitBorder;
+
+          if (split) {
+            splitBorder = [
+              cell.x === split.x && "bottom",
+              cell.y === split.y && "right",
+            ];
+          }
 
           return (
-            <Cell
+            <MemoizedCell
               key={`${i}${j}`}
               color={cellData.color}
+              splitBorder={splitBorder}
               isSelected={cellData.selected}
               onMouseDown={handleCellClick(cell)}
               onMouseEnter={handleMouseEnter(cell)}
