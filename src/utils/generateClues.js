@@ -4,9 +4,9 @@
  *
  * @param {array} cells cells to generate nonogram groups for.
  */
-export default cells => {
+export default (cells) => {
   cells.sort((a, b) => a - b);
-  return cells.reduce((acc, curr, index) => {
+  const result = cells.reduce((acc, curr, index) => {
     if (index && curr === parseInt(cells[index - 1] + 1)) {
       acc[acc.length - 1] += 1;
     } else {
@@ -14,4 +14,6 @@ export default cells => {
     }
     return acc;
   }, []);
+
+  return !result.length ? [0] : result;
 };

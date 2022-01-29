@@ -5,7 +5,7 @@ import Grid from "./components/Grid";
 import { Splits } from "./components/Splits";
 import { StateProvider } from "./store.js";
 
-const size = 15;
+const size = 5;
 
 function App() {
   return (
